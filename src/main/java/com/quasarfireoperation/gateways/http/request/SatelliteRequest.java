@@ -7,15 +7,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static javax.validation.constraints.Pattern.Flag.CASE_INSENSITIVE;
 
 @Data
 @NoArgsConstructor
 @JsonInclude(NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SatelliteRequest {
+
+    @Pattern(regexp = "kenobi|skywalker|sato", message = "{field.must.match}", flags = CASE_INSENSITIVE)
     private String name;
     private float distance;
     @NotEmpty

@@ -1,32 +1,52 @@
 package com.quasarfireoperation.usecase;
 
+import com.quasarfireoperation.domains.exception.DecryptMessageException;
+import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static java.lang.System.out;
+import static java.util.Locale.getDefault;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.logging.log4j.util.Strings.isBlank;
 
 @Component
+@RequiredArgsConstructor
 public class DecryptSatelliteMessages {
 
-    public String getMessage(final List<String> ...messages) {
+    private static final String COULD_NOT_DECRYPT_MESSAGE = "could.not.decrypt.message";
+    private final MessageSource messageSource;
+
+    public String getMessage(final List<List<String>> messages) {
         final List<String> mergedMessage = new LinkedList<>();
-        for (int i = 0; i < messages.length; i++) {
-            List<String> actualMessage = messages[i];
-            for (int j = 0; j<actualMessage.size(); j++){
-                if (isBlank(actualMessage.get(j))) {
-                    for (int k = i + 1; k < messages.length; k++) {
-                        mergeMessage(messages[k].get(j), mergedMessage);
-                    }
-                } else
-                    mergeMessage(actualMessage.get(j), mergedMessage);
+        try {
+            for (int i = 0; i < messages.size(); i++) {
+                List<String> actualMessage = messages.get(i);
+                for (int j = 0; j < actualMessage.size(); j++) {
+                    if (isBlank(actualMessage.get(j))) {
+                        for (int k = i + 1; k < messages.size(); k++) {
+                            mergeMessage(messages.get(k).get(j), mergedMessage);
+                        }
+                    } else
+                        mergeMessage(actualMessage.get(j), mergedMessage);
+                }
+                if (mergedMessage.size() == actualMessage.size())
+                    break;
             }
-            if (mergedMessage.size()==actualMessage.size())
-                break;
+            if (mergedMessage.stream().anyMatch(Strings::isBlank))
+                throw new IllegalArgumentException();
+        } catch (final Exception e) {
+
+            throw new DecryptMessageException(
+                    messageSource.getMessage(
+                            COULD_NOT_DECRYPT_MESSAGE,
+                            null,
+                            getDefault())
+            );
         }
         return Arrays.toString(mergedMessage.toArray());
     }
@@ -35,13 +55,5 @@ public class DecryptSatelliteMessages {
         if (isNotBlank(message)) {
             mergedMessage.add(message);
         }
-    }
-
-    public static void main(String[] args) {
-        out.println(new DecryptSatelliteMessages().getMessage(
-                Arrays.asList("este", "", "", "mensaje", ""),
-                Arrays.asList("", "es", "", "", "secreto"),
-                Arrays.asList("este", "", "un", "", "")
-        ));
     }
 }

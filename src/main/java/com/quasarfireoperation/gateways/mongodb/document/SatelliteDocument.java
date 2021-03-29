@@ -21,7 +21,7 @@ public class SatelliteDocument {
     private List<String> message;
 
     public SatelliteDocument(final Satellite satellite) {
-        this.name = satellite.getName();
+        this.name = SatelliteCoordinate.valueOf(satellite.getName().toUpperCase()).name();
         this.distance = satellite.getDistance();
         this.message = satellite.getMessage();
     }

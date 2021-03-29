@@ -7,6 +7,8 @@ import com.quasarfireoperation.gateways.mongodb.repository.SatelliteMongoReposit
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class SatelliteMongoDataGateway implements SatelliteDataGateway {
@@ -14,10 +16,9 @@ public class SatelliteMongoDataGateway implements SatelliteDataGateway {
     private final SatelliteMongoRepository repository;
 
     @Override
-    public Satellite findBySatelliteName(final String name) {
+    public Optional<Satellite> findBySatelliteName(final String name) {
         return repository.findByNameIgnoreCase(name)
-                .map(SatelliteDocument::toDomain)
-                .orElse(null);
+                .map(SatelliteDocument::toDomain);
     }
 
     @Override
