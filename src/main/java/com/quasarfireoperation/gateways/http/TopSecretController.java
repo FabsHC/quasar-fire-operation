@@ -2,7 +2,6 @@ package com.quasarfireoperation.gateways.http;
 
 import com.quasarfireoperation.domains.Location;
 import com.quasarfireoperation.domains.Satellite;
-import com.quasarfireoperation.domains.exception.SatelliteNotFoundException;
 import com.quasarfireoperation.gateways.SatelliteDataGateway;
 import com.quasarfireoperation.gateways.http.request.SatelliteListRequest;
 import com.quasarfireoperation.gateways.http.request.SatelliteRequest;
@@ -12,27 +11,25 @@ import com.quasarfireoperation.usecase.CalculateLocationFromSatellites;
 import com.quasarfireoperation.usecase.DecryptSatelliteMessages;
 import com.quasarfireoperation.usecase.FindSatelliteByName;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
-import java.util.LinkedList;
+import javax.validation.constraints.Pattern;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static java.util.Locale.getDefault;
-import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
+import static javax.validation.constraints.Pattern.Flag.CASE_INSENSITIVE;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 public class TopSecretController {
 
-    private static final String WHITE_SPACE_SEPARATOR = "";
+    private static final String WHITE_SPACE_SEPARATOR = " ";
     private final CalculateLocationFromSatellites calculateLocationFromSatellites;
     private final SatelliteDataGateway satelliteDataGateway;
     private final FindSatelliteByName findSatelliteByName;
@@ -57,12 +54,13 @@ public class TopSecretController {
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE, value = "/topsecret_split/{satellite_name}")
     @ResponseStatus(OK)
     public SpaceShipResponse sendMessageToSpecificSatellite(
-            @PathVariable(value = "satellite_name") final String satelliteName,
+            @PathVariable(value = "satellite_name")
+            @Pattern(regexp = "kenobi|skywalker|sato", message = "{field.must.match}", flags = CASE_INSENSITIVE)
+            final String satelliteName,
             @Valid @RequestBody final SatelliteRequest request) {
         request.setName(satelliteName);
-        final Location location = calculateLocationFromSatellites.getLocation(request.getDistance());
         final Satellite satellite = satelliteDataGateway.save(request.toDomain());
-        return new SpaceShipResponse(new LocationResponse(location), join(satellite.getMessage(), WHITE_SPACE_SEPARATOR));
+        return new SpaceShipResponse(new LocationResponse(satellite.getLocation()), join(satellite.getMessage(), WHITE_SPACE_SEPARATOR));
     }
 
     @GetMapping(produces = APPLICATION_JSON_VALUE, value = "/topsecret_split/{satellite_name}")
@@ -70,7 +68,6 @@ public class TopSecretController {
     public SpaceShipResponse getMessageFromSpecificSatellite(
             @PathVariable(value = "satellite_name") final String satelliteName) {
         final Satellite satellite = findSatelliteByName.execute(satelliteName);
-
         return new SpaceShipResponse(new LocationResponse(satellite.getLocation()), join(satellite.getMessage(), WHITE_SPACE_SEPARATOR));
     }
 }

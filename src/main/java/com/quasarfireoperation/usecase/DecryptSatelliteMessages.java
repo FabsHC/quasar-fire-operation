@@ -19,20 +19,24 @@ import static org.apache.logging.log4j.util.Strings.isBlank;
 public class DecryptSatelliteMessages {
 
     private static final String COULD_NOT_DECRYPT_MESSAGE = "could.not.decrypt.message";
-    private final MessageSource messageSource;
+    private final MessageSource messageSource; //TODO: messageSource não acha a mensagem acima
 
     public String getMessage(final List<List<String>> messages) {
         final List<String> mergedMessage = new LinkedList<>();
         try {
+            String messagePart;
             for (int i = 0; i < messages.size(); i++) {
                 List<String> actualMessage = messages.get(i);
                 for (int j = 0; j < actualMessage.size(); j++) {
+                    messagePart = actualMessage.get(j);
                     if (isBlank(actualMessage.get(j))) {
                         for (int k = i + 1; k < messages.size(); k++) {
-                            mergeMessage(messages.get(k).get(j), mergedMessage);
+                            messagePart = messages.get(k).get(j);
+                            if (isNotBlank(messagePart))
+                                break;
                         }
-                    } else
-                        mergeMessage(actualMessage.get(j), mergedMessage);
+                    }
+                    mergedMessage.add(messagePart);
                 }
                 if (mergedMessage.size() == actualMessage.size())
                     break;
@@ -40,7 +44,7 @@ public class DecryptSatelliteMessages {
             if (mergedMessage.stream().anyMatch(Strings::isBlank))
                 throw new IllegalArgumentException();
         } catch (final Exception e) {
-
+            e.printStackTrace();
             throw new DecryptMessageException(
                     messageSource.getMessage(
                             COULD_NOT_DECRYPT_MESSAGE,
@@ -49,11 +53,5 @@ public class DecryptSatelliteMessages {
             );
         }
         return Arrays.toString(mergedMessage.toArray());
-    }
-
-    private void mergeMessage(final String message, final List<String> mergedMessage) {
-        if (isNotBlank(message)) {
-            mergedMessage.add(message);
-        }
     }
 }

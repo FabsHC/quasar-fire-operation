@@ -4,8 +4,3 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/operation-quasar-fire
-
-messages:
-  default:
-    country: US
-    language: en

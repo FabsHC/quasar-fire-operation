@@ -15,7 +15,7 @@ import static java.lang.System.out;
 public class CalculateLocationFromSatellites {
 
     private static final String satelites = "Kenobi[%.2f,%.2f] - Skywalker[%.2f,%.2f] - Sato[%.2f,%.2f]";
-    public Location getLocation(final Float ...distances) {
+    public Location getLocation(final Float ...distances) { //TODO: Arrumar cálculo da triangulação
         out.println("Distances: " + Arrays.toString(distances));
         out.println(String.format(satelites,
                 KENOBI.getX(), KENOBI.getY(),
