@@ -3,7 +3,7 @@
 ##### Dependencies
 * JDK 15
 * Mongo DB
-* Docker(maybe, it's up to you)
+* Docker(maybe, it's up to you!)
 
 ##### Setup
 This project will need the dependencies above to run. You can find the JDK 15 here: https://sdkman.io/ . I highly recommend you to download this guy, you can find many SDKs from many languages in there. The MongoDB dependency it's up to you. I used a docker image  with the command below: 
