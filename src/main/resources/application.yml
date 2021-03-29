@@ -3,4 +3,4 @@ spring:
     name: quasar-fire-operation
   data:
     mongodb:
-      uri: mongodb://localhost:27017/operation-quasar-fire
+      uri: ${MONGODB_URI}
