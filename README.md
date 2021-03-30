@@ -90,3 +90,100 @@ Now following the equation below, we got the spaceship x,y coordinates:
 
 ![image](https://user-images.githubusercontent.com/9483458/113048212-ada05100-9178-11eb-97e5-cb344442e2ca.png)
 ![image](https://user-images.githubusercontent.com/9483458/113048287-bf81f400-9178-11eb-8170-f207bb5a0482.png)
+
+##### Input Gateways
+Now that you know how the solution was done, the APIs below are the input gateways of this project:
+
+**POST -> /topsecret/** This is the API responsible to find the coordinates of the spaceship and decrypt the message. Here you inform all the data from the three satellites.
+
+Example Request:
+```
+{
+  "satellites": [
+    {
+      "name": "kenobi",
+      "distance": 100,
+      "message": [
+        "this",
+        "",
+        "",
+        "secret",
+        ""
+      ]
+    },
+    {
+      "name": "skywalker",
+      "distance": 115.5,
+      "message": [
+        "",
+        "is",
+        "",
+        "",
+        "message"
+      ]
+    },
+    {
+      "name": "sato",
+      "distance": 142.7,
+      "message": [
+        "this",
+        "",
+        "a",
+        "",
+        ""
+      ]
+    }
+  ]
+}
+```
+Example Response:
+```
+{
+  "position": {
+    "x": -487.29,
+    "y": 1557.01
+  },
+  "message": "[this, is, a, secret, message]"
+}
+```
+**POST -> /topsecret_split/kenobi** This is the API responsible to save data to a specific satellite and return the position itself and the partial message.
+
+Example Request: /topsecret_split/kenobi
+```
+{
+  "distance": 100,
+  "message": [
+    "This",
+    "",
+    "",
+    "secret",
+    ""
+  ]
+}
+```
+Example Response:
+```
+{
+  "position": {
+    "x": -500,
+    "y": -200
+  },
+  "message": "this   secret "
+}
+```
+**GET -> /topsecret_split/kenobi** This is the API responsible to retrieve a position and partial message from a specific satellite.
+
+Example Request:/topsecret_split/kenobi
+
+Example Response:
+```
+{
+  "position": {
+    "x": -500,
+    "y": -200
+  },
+  "message": "this   secret "
+}
+```
+
+Any doubts or questions you can open an issue or send me an e-mail.😃
