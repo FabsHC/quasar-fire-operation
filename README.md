@@ -25,7 +25,7 @@ The project uses Clean Architecture with some modifications:
 * **Usecase** -> In this layer we have the core of the application. All the business logics are here.
 
 ##### The Problem
-At a unknown x,y coordinate we have a transmitter sending a message to 3 stellites with know x,y coordinates:
+At a unknown (x;y) coordinate we have a transmitter sending a message to 3 stellites with know (x;y) coordinates:
 * Kenobi(-500;-200)
 * Skywalker(100;-100)
 * Sato(500;100)
@@ -38,7 +38,7 @@ Each satellite knows the distance, between itself and the transmitter, and part 
 You can notice that some parts of the message are missing, because the transmitter could not send all the message. The other parts are with the other satellites.
 So, to know all the message, you will have to merge the satellites information.
 
-The other problem is, you need to know the spaceship location (x;y) to retreive whatever the message says. To do that, we will use the satellites coordinates and distances from the spaceship.
+The other problem is, you need to know the spaceship location (x;y) to retrieve whatever the message says. To do that, we will use the satellites coordinates and distances from the spaceship.
 
 ##### The Solutions
 ###### Decryption of the message
@@ -86,7 +86,7 @@ This can be solved using Cramer's rule finding the determinants:
 
 ![image](https://user-images.githubusercontent.com/9483458/113048906-69fa1700-9179-11eb-8285-3d3cae0b8ec5.png)
 
-Now following the equation below, we got the spaceship x,y coordinates:
+Now following the equation below, we got the spaceship (x;y) coordinates:
 
 ![image](https://user-images.githubusercontent.com/9483458/113048212-ada05100-9178-11eb-97e5-cb344442e2ca.png)
 ![image](https://user-images.githubusercontent.com/9483458/113048287-bf81f400-9178-11eb-8170-f207bb5a0482.png)
