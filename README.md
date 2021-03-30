@@ -68,7 +68,7 @@ Now we need two new equations to find the spaceship position, so we subtract the
 
 ![image](https://user-images.githubusercontent.com/9483458/113046235-349ffa00-9176-11eb-82b3-8b2378fbf877.png)
 
-Again, but now subtract the third equation from the second:
+Do the same, but this time subtract the third equation from the second:
 
 ![image](https://user-images.githubusercontent.com/9483458/113046659-b132d880-9176-11eb-968e-8b3124847884.png)
 
@@ -78,3 +78,15 @@ So we have our two equations to find the spaceship:
 
 Where:
 
+![image](https://user-images.githubusercontent.com/9483458/113047687-015e6a80-9178-11eb-9a86-a30eb35c940a.png)
+
+![image](https://user-images.githubusercontent.com/9483458/113047740-15a26780-9178-11eb-9f27-28d4c58b8b7d.png)
+
+This can be solved using Cramer's rule finding the determinants:
+
+![image](https://user-images.githubusercontent.com/9483458/113048906-69fa1700-9179-11eb-8285-3d3cae0b8ec5.png)
+
+Now following the equation below, we got the spaceship x,y coordinates:
+
+![image](https://user-images.githubusercontent.com/9483458/113048212-ada05100-9178-11eb-97e5-cb344442e2ca.png)
+![image](https://user-images.githubusercontent.com/9483458/113048287-bf81f400-9178-11eb-8170-f207bb5a0482.png)
