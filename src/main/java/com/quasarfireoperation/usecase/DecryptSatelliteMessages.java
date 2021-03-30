@@ -2,6 +2,7 @@ package com.quasarfireoperation.usecase;
 
 import com.quasarfireoperation.domains.exception.DecryptMessageException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import static java.util.Locale.getDefault;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.logging.log4j.util.Strings.isBlank;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DecryptSatelliteMessages {
@@ -22,6 +24,7 @@ public class DecryptSatelliteMessages {
     private final MessageSource messageSource;
 
     public String getMessage(final List<List<String>> messages) {
+        log.info("Decrypting spaceship message status=START, messages={}",messages);
         final List<String> mergedMessage = new LinkedList<>();
         try {
             String messagePart;
@@ -43,8 +46,9 @@ public class DecryptSatelliteMessages {
             }
             if (mergedMessage.stream().anyMatch(Strings::isBlank))
                 throw new IllegalArgumentException();
+            log.info("Decrypting spaceship message status=FINISH, messages={}, decrypted message={}", messages, mergedMessage);
         } catch (final Exception e) {
-            e.printStackTrace();
+            log.error("Decrypting spaceship message status=ERROR, messages={}", messages, e);
             throw new DecryptMessageException(
                     messageSource.getMessage(
                             COULD_NOT_DECRYPT_MESSAGE,

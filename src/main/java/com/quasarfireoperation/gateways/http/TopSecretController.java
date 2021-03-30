@@ -11,6 +11,7 @@ import com.quasarfireoperation.usecase.CalculateLocationFromSatellites;
 import com.quasarfireoperation.usecase.DecryptSatelliteMessages;
 import com.quasarfireoperation.usecase.FindSatelliteByName;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ import static org.apache.commons.lang3.StringUtils.join;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Slf4j
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -38,6 +40,7 @@ public class TopSecretController {
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE, value = "/topsecret/")
     @ResponseStatus(OK)
     public SpaceShipResponse sendMessageToSatellites(@Valid @RequestBody final SatelliteListRequest request){
+        log.info("Request received for POST API /topsecret/ with body={}", request);
         request.getSatellites()
                 .stream()
                 .map(SatelliteRequest::toDomain)
@@ -58,6 +61,7 @@ public class TopSecretController {
             @Pattern(regexp = "kenobi|skywalker|sato", message = "{field.must.match}", flags = CASE_INSENSITIVE)
             final String satelliteName,
             @Valid @RequestBody final SatelliteRequest request) {
+        log.info("Request received for POST API /topsecret_split/{satellite_name} for satellite={} with body={}", satelliteName, request);
         request.setName(satelliteName);
         final Satellite satellite = satelliteDataGateway.save(request.toDomain());
         return new SpaceShipResponse(new LocationResponse(satellite.getLocation()), join(satellite.getMessage(), WHITE_SPACE_SEPARATOR));
@@ -67,6 +71,7 @@ public class TopSecretController {
     @ResponseStatus(OK)
     public SpaceShipResponse getMessageFromSpecificSatellite(
             @PathVariable(value = "satellite_name") final String satelliteName) {
+        log.info("Request received for GET API /topsecret_split/{satellite_name} for satellite={}", satelliteName);
         final Satellite satellite = findSatelliteByName.execute(satelliteName);
         return new SpaceShipResponse(new LocationResponse(satellite.getLocation()), join(satellite.getMessage(), WHITE_SPACE_SEPARATOR));
     }
