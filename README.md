@@ -41,7 +41,7 @@ So, to know all the message, you will have to merge the satellites information.
 The other problem is, you need to know the spaceship location (x;y) to retreive whatever the message says. To do that, we will use the satellites coordinates and distances from the spaceship.
 
 ##### The Solutions
-#### Decryption of the message
+###### Decryption of the message
 The messages problem is a simple merge of information, we assume that the same message will reach each satellite with missing parts, like the example below:
 * Kenobi: {This, , a, , message., , , }
 * Skywalker: { , , , secret, message., , , us}
@@ -49,7 +49,7 @@ The messages problem is a simple merge of information, we assume that the same m
 
 The missing parts are represented with Empty Strings. In case the program could not decrypt the message, it'll return an error.
 
-#### Spaceship location
+###### Spaceship location
 This part is more complicated. Here I used a trilateration of coordinates and distances.
 **Knowing that Kenobi Satelitte is number 1, Skywalker is 2 and Sato is 3.**
 We start with the distance(range) between two points equation:
