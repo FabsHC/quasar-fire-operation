@@ -4,3 +4,16 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_URI}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+        exclude: configmaps
+  endpoint:
+    health:
+      show-details: always
+info:
+  app:
+    name: Quasar Fire Operation
+    description: This project is to calculate the coordinates by trilateration. More details visit https://github.com/FabsHC/quasar-fire-operation
