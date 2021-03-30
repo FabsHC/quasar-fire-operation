@@ -6,7 +6,7 @@
 * Docker(maybe, it's up to you!)
 
 ##### Setup
-This project will need the dependencies above to run. You can find the JDK 15 here: https://sdkman.io/ . I highly recommend you to download this guy, you can find many SDKs from many languages in there. I ran an instance of Mongodb on a Docker container with this command:
+This project will need the dependencies above to run. You can find the JDK 15 [here](https://sdkman.io/). I highly recommend you to download this guy, you can find many SDKs from many languages in there. I ran an instance of Mongodb on a Docker container with this command:
 * docker run -d --name mongodb -p 127.0.0.1:27017:27017 -d mongo:3.4.2
 
 You can, of course, use an instance of mongodb the way you like. At least, it's a maven project, so you will need to have maven installed.
