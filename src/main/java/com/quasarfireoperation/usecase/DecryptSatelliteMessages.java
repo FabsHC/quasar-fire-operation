@@ -19,7 +19,7 @@ import static org.apache.logging.log4j.util.Strings.isBlank;
 public class DecryptSatelliteMessages {
 
     private static final String COULD_NOT_DECRYPT_MESSAGE = "could.not.decrypt.message";
-    private final MessageSource messageSource; //TODO: messageSource não acha a mensagem acima
+    private final MessageSource messageSource;
 
     public String getMessage(final List<List<String>> messages) {
         final List<String> mergedMessage = new LinkedList<>();

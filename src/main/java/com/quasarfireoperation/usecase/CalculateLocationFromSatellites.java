@@ -1,63 +1,53 @@
 package com.quasarfireoperation.usecase;
 
 import com.quasarfireoperation.domains.Location;
+import com.quasarfireoperation.domains.exception.SpaceshipPositionNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import java.math.BigDecimal;
 
 import static com.quasarfireoperation.domains.SatelliteCoordinate.*;
-import static java.lang.Math.*;
-import static java.lang.System.out;
+import static java.lang.Math.pow;
+import static java.math.RoundingMode.HALF_UP;
+import static java.util.Locale.getDefault;
+import static org.apache.commons.lang3.StringUtils.join;
 
 @Component
 @RequiredArgsConstructor
 public class CalculateLocationFromSatellites {
 
-    private static final String satelites = "Kenobi[%.2f,%.2f] - Skywalker[%.2f,%.2f] - Sato[%.2f,%.2f]";
-    public Location getLocation(final Float ...distances) { //TODO: Arrumar cálculo da triangulação
-        out.println("Distances: " + Arrays.toString(distances));
-        out.println(String.format(satelites,
-                KENOBI.getX(), KENOBI.getY(),
-                SKYWALKER.getX(), SKYWALKER.getY(),
-                SATO.getX(), SATO.getY()));
-        out.println();
+    private static final String COULD_NOT_FIND_SPACESHIP_COORDINATES = "could.not.find.spaceship.coordinates";
+    private final MessageSource messageSource;
 
-//        double aKSk = toDegrees(atan2((KENOBI.getY()- SKYWALKER.getY()), (KENOBI.getX()- SKYWALKER.getX())));
-//        double aKSa = toDegrees(atan2((KENOBI.getY()- SATO.getY()), (KENOBI.getX()- SATO.getX())));
-//        double aSkK = toDegrees(atan2((SKYWALKER.getY()- KENOBI.getY()), (SKYWALKER.getX()- KENOBI.getX())));
-//        double aSkSa = toDegrees(atan2((SKYWALKER.getY()- SATO.getY()), (SKYWALKER.getX()- SATO.getX())));
-//        double aSaK = toDegrees(atan2((SATO.getY()- KENOBI.getY()), (SATO.getX()- KENOBI.getX())));
-//        double aSaSk = toDegrees(atan2((SATO.getY()- SKYWALKER.getY()), (SATO.getX()- SKYWALKER.getX())));
-//        double media = (aKSk + aKSa + aSkSa + aSkK + aSaK + aSaSk)/6;
-//
-//        out.println("Azimuth Kenobi-Skywalker: "+aKSk);
-//        out.println("Azimuth Kenobi-Sato: "+aKSa);
-//        out.println("Azimuth Skywalker-Kenobi: "+aSkK);
-//        out.println("Azimuth Skywalker-Sato: "+aSkSa);
-//        out.println("Azimuth Sato-Kenobi: "+aSaK);
-//        out.println("Azimuth Sato-Skywalker: "+aSaSk);
-//        out.println("Azimuths: "+media);
-//        out.println();
-//
-//        float x,y;
-//        for (float distance : distances) {
-//            x = ((float) sin(media)) * distance;
-//            y = ((float) cos(media)) * distance;
-//            out.println("Azimuth Kenobi-Skywalker : x -> " + x + " / y -> " + y);
-//            x = ((float) sin(aKSa)) * distance;
-//            y = ((float) cos(aKSa)) * distance;
-//            out.println("Azimuth Kenobi-Sato: x -> " + x + " / y -> " + y);
-//            x = ((float) sin(aSkSa)) * distance;
-//            y = ((float) cos(aSkSa)) * distance;
-//            out.println("Azimuth Skywalker-Sato: x -> " + x + " / y -> " + y);
-//            out.println();
-//        }
-        return new Location(100, -100);
+    public Location getLocation(final Float ...distances) {
+        try {
+            //Distance equation Kenobi - Skywalker
+            double a = -2 * KENOBI.getX() + 2 * SKYWALKER.getX();
+            double b = -2 * KENOBI.getY() + 2 * SKYWALKER.getY();
+            double c = pow(distances[0], 2) - pow(distances[1], 2) - pow(KENOBI.getX(), 2) + pow(SKYWALKER.getX(), 2) - pow(KENOBI.getY(), 2) + pow(SKYWALKER.getY(), 2);
+            //Distance equation Skywalker - Sato
+            double e = -2 * SKYWALKER.getX() + 2 * SATO.getX();
+            double f = -2 * SKYWALKER.getY() + 2 * SATO.getY();
+            double g = pow(distances[1], 2) - pow(distances[2], 2) - pow(SKYWALKER.getX(), 2) + pow(SATO.getX(), 2) - pow(SKYWALKER.getY(), 2) + pow(SATO.getY(), 2);
+            //Finding Cramer's rule determinants
+            double d = a * f - b * e;
+            if (d == 0.0) {
+                final String message = join(distances, ",");
+                throw new IllegalArgumentException(
+                        messageSource.getMessage(
+                                COULD_NOT_FIND_SPACESHIP_COORDINATES,
+                                new String[]{message},
+                                getDefault()));
+            }
+            double dx = c * f - b * g;
+            double dy = a * g - c * e;
+            float x = BigDecimal.valueOf(dx / d).setScale(2, HALF_UP).floatValue();
+            float y = BigDecimal.valueOf(dy / d).setScale(2, HALF_UP).floatValue();
+            return new Location(x, y);
+        } catch(final Exception ex) {
+            throw new SpaceshipPositionNotFoundException(ex.getMessage());
+        }
     }
-
-//    public static void main(String[] args) {
-//        new CalculateLocationFromSatellites().getLocation(100f, 115.5f, 142.7f );
-//    }
-
 }
