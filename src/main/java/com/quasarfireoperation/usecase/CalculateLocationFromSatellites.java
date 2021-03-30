@@ -23,6 +23,9 @@ public class CalculateLocationFromSatellites {
 
     public Location getLocation(final Float ...distances) {
         try {
+            //for the operation below we need the 3 distances of the satellites
+            if (distances.length<3)
+                throw new IllegalArgumentException(getMessage(distances));
             //Distance equation Kenobi - Skywalker
             double a = -2 * KENOBI.getX() + 2 * SKYWALKER.getX();
             double b = -2 * KENOBI.getY() + 2 * SKYWALKER.getY();
@@ -33,14 +36,8 @@ public class CalculateLocationFromSatellites {
             double g = pow(distances[1], 2) - pow(distances[2], 2) - pow(SKYWALKER.getX(), 2) + pow(SATO.getX(), 2) - pow(SKYWALKER.getY(), 2) + pow(SATO.getY(), 2);
             //Finding Cramer's rule determinants
             double d = a * f - b * e;
-            if (d == 0.0) {
-                final String message = join(distances, ",");
-                throw new IllegalArgumentException(
-                        messageSource.getMessage(
-                                COULD_NOT_FIND_SPACESHIP_COORDINATES,
-                                new String[]{message},
-                                getDefault()));
-            }
+            if (d == 0.0)
+                throw new IllegalArgumentException(getMessage(distances));
             double dx = c * f - b * g;
             double dy = a * g - c * e;
             float x = BigDecimal.valueOf(dx / d).setScale(2, HALF_UP).floatValue();
@@ -49,5 +46,13 @@ public class CalculateLocationFromSatellites {
         } catch(final Exception ex) {
             throw new SpaceshipPositionNotFoundException(ex.getMessage());
         }
+    }
+
+    private String getMessage(final Float... distances) {
+        final String message = join(distances, ",");
+        return messageSource.getMessage(
+                COULD_NOT_FIND_SPACESHIP_COORDINATES,
+                new String[]{message},
+                getDefault());
     }
 }
