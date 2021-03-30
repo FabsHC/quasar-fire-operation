@@ -25,7 +25,7 @@ The project uses Clean Architecture with some modifications:
 * **Usecase** -> In this layer we have the core of the application. All the business logics are here.
 
 ##### The Problem
-At a unknown x,y coordinate we have a transmitter sending a message to 3 stellites with know x,y coordinates:
+At a unknown (x;y) coordinate we have a transmitter sending a message to 3 stellites with know (x;y) coordinates:
 * Kenobi(-500;-200)
 * Skywalker(100;-100)
 * Sato(500;100)
@@ -38,7 +38,7 @@ Each satellite knows the distance, between itself and the transmitter, and part 
 You can notice that some parts of the message are missing, because the transmitter could not send all the message. The other parts are with the other satellites.
 So, to know all the message, you will have to merge the satellites information.
 
-The other problem is, you need to know the spaceship location (x;y) to retreive whatever the message says. To do that, we will use the satellites coordinates and distances from the spaceship.
+The other problem is, you need to know the spaceship location (x;y) to retrieve whatever the message says. To do that, we will use the satellites coordinates and distances from the spaceship.
 
 ##### The Solutions
 ###### Decryption of the message
@@ -86,7 +86,104 @@ This can be solved using Cramer's rule finding the determinants:
 
 ![image](https://user-images.githubusercontent.com/9483458/113048906-69fa1700-9179-11eb-8285-3d3cae0b8ec5.png)
 
-Now following the equation below, we got the spaceship x,y coordinates:
+Now following the equation below, we got the spaceship (x;y) coordinates:
 
 ![image](https://user-images.githubusercontent.com/9483458/113048212-ada05100-9178-11eb-97e5-cb344442e2ca.png)
 ![image](https://user-images.githubusercontent.com/9483458/113048287-bf81f400-9178-11eb-8170-f207bb5a0482.png)
+
+##### Input Gateways
+Now that you know how the solution was done, the APIs below are the input gateways of this project:
+
+**POST -> /topsecret/** This is the API responsible to find the coordinates of the spaceship and decrypt the message. Here you inform all the data from the three satellites.
+
+Example Request:
+```
+{
+  "satellites": [
+    {
+      "name": "kenobi",
+      "distance": 100,
+      "message": [
+        "this",
+        "",
+        "",
+        "secret",
+        ""
+      ]
+    },
+    {
+      "name": "skywalker",
+      "distance": 115.5,
+      "message": [
+        "",
+        "is",
+        "",
+        "",
+        "message"
+      ]
+    },
+    {
+      "name": "sato",
+      "distance": 142.7,
+      "message": [
+        "this",
+        "",
+        "a",
+        "",
+        ""
+      ]
+    }
+  ]
+}
+```
+Example Response:
+```
+{
+  "position": {
+    "x": -487.29,
+    "y": 1557.01
+  },
+  "message": "[this, is, a, secret, message]"
+}
+```
+**POST -> /topsecret_split/kenobi** This is the API responsible to save data to a specific satellite and return the position itself and the partial message.
+
+Example Request: /topsecret_split/kenobi
+```
+{
+  "distance": 100,
+  "message": [
+    "This",
+    "",
+    "",
+    "secret",
+    ""
+  ]
+}
+```
+Example Response:
+```
+{
+  "position": {
+    "x": -500,
+    "y": -200
+  },
+  "message": "this   secret "
+}
+```
+**GET -> /topsecret_split/kenobi** This is the API responsible to retrieve a position and partial message from a specific satellite.
+
+Example Request:/topsecret_split/kenobi
+
+Example Response:
+```
+{
+  "position": {
+    "x": -500,
+    "y": -200
+  },
+  "message": "this   secret "
+}
+```
+
+Any doubts or questions you can open an issue or send me an e-mail.😃
